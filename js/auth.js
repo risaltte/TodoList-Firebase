@@ -1,3 +1,6 @@
+// Traduzindo autenticação para português brasileiro
+firebase.auth().languageCode = 'pt-BR';
+
 authForm.onsubmit = function (event) {    
     
     event.preventDefault();
@@ -46,9 +49,9 @@ function sendEmailVerification () {
 
     var user = firebase.auth().currentUser;
 
-    user.sendEmailVerification()
+    user.sendEmailVerification(actionCodeSettings)
         .then(function () {
-            alert('Email de verificação fo enviado para ' + user.email + '! Verifique a sua caixa de entrada.');
+            alert('E-mail de verificação foi enviado para ' + user.email + '! Verifique a sua caixa de entrada.');
         })
         .catch(function (error) {
             alert('Houve um erro ao enviar o email de verificação.');
