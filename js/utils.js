@@ -2,6 +2,7 @@ var authForm = document.getElementById('authForm');
 var ahthFormTitle = document.getElementById('authFormTitle');
 var register = document.getElementById('register');
 var access = document.getElementById('access');
+var passwordReset = document.getElementById('passwordReset');
 
 var loading = document.getElementById('loading');
 
@@ -19,6 +20,7 @@ function toggleToRegister() {
     authFormTitle.innerHTML = 'Insira seus dados para se cadastrar';
 
     hideItem(register);
+    hideItem(passwordReset);
     showItem(access);
 }
 
@@ -27,6 +29,7 @@ function toggleToAccess() {
     authForm.submitAuthForm.innerHTML = 'Acessar';
     authFormTitle.innerHTML = 'Acesse a sua conta para continuar';
     hideItem(access);
+    showItem(passwordReset);
     showItem(register);
 }
 
