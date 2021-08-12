@@ -1,6 +1,7 @@
-// Traduzindo autenticação para português brasileiro
+// TRADUZIR AUTENTICAÇÃO PARA PORTUGUÊS BRASILEIRO
 firebase.auth().languageCode = 'pt-BR';
 
+// TRATAR SUBMISSÃO DO FORMULÁRIO DE AUTENTICAÇÃO
 authForm.onsubmit = function (event) {    
     
     event.preventDefault();
@@ -25,12 +26,14 @@ authForm.onsubmit = function (event) {
     }
 }
 
+// TRATAMENTO DA AUTENTICAÇÃO
 firebase.auth().onAuthStateChanged(function (user) {
 
     hideItem(loading);
 
     if (user) {
         showUserContent(user);
+        console.log(user);
     } else {
         showAuth();
     }
@@ -44,6 +47,7 @@ function signOut() {
         });
 }
 
+// VERIFICAÇÃO DE E-MAIL
 function sendEmailVerification () {
     showItem(loading);
 
@@ -62,6 +66,7 @@ function sendEmailVerification () {
         });
 }
 
+// REDEFINIÇÃO DE SENHA
 function sendPasswordResetEmail() {
     var email = prompt('Redefinir senha! Informe o seu endereço de e-mail.', authForm.email.value);
 
@@ -83,6 +88,18 @@ function sendPasswordResetEmail() {
     } else {
         alert('É preciso preencher o campo de e-mail para redefinir a senha.');
     }
+}
+
+// AUTENTICAÇÃO PELO GOOGLE
+function signInWithGoogle() {
+    showItem(loading);
+
+    firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider())
+        .catch(function (error) {
+            alert('Houve um erro ao autenticar usando o Google.');
+            console.log(error);
+            hideItem(loading);
+        });
 }
 
 

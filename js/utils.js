@@ -10,6 +10,8 @@ var auth = document.getElementById('auth');
 var userContent = document.getElementById('userContent');
 
 var userEmail = document.getElementById('userEmail');
+var userImg = document.getElementById('userImg');
+var userName = document.getElementById('userName');
 
 var sendEmailVerificationDiv = document.getElementById('sendEmailVerificationDiv');
 var emailVerified = document.getElementById('emailVerified');
@@ -41,6 +43,7 @@ function hideItem(element) {
     element.style.display = 'none';
 }
 
+// Exibir o conteúdo do usuário
 function showUserContent (user) {
 
     if (user.emailVerified) {
@@ -50,6 +53,9 @@ function showUserContent (user) {
         emailVerified.innerHTML = 'E-mail não verificado';
         showItem(sendEmailVerificationDiv);
     }
+
+    userImg.src = user.photoURL ? user.photoURL : '../img/unknownUser.png';
+    userName.innerHTML = user.displayName;
 
     userEmail.innerHTML = user.email;
     hideItem(auth);
