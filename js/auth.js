@@ -33,7 +33,6 @@ firebase.auth().onAuthStateChanged(function (user) {
 
     if (user) {
         showUserContent(user);
-        console.log(user);
     } else {
         showAuth();
     }
@@ -100,6 +99,18 @@ function signInWithGoogle() {
             console.log(error);
             hideItem(loading);
         });
+}
+
+// AUTENTICAÇÃO PELO GITHUB
+function signInWithGitHub() {
+    showItem(loading);
+
+    firebase.auth().signInWithRedirect(new firebase.auth.GithubAuthProvider())
+    .catch(function (error) {
+        alert('Houve um erro ao autenticar usando o GitHub.');
+        console.log(error);
+        hideItem(loading);
+    });
 }
 
 

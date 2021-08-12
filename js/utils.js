@@ -45,14 +45,24 @@ function hideItem(element) {
 
 // Exibir o conteúdo do usuário
 function showUserContent (user) {
+    console.log(user);
 
-    if (user.emailVerified) {
-        emailVerified.innerHTML = 'Email verificado';
+    if (user.providerData[0].providerId != 'password') {
+        
+        emailVerified.innerHTML = 'Autenticado por provedor confiável: ' + user.providerData[0].providerId;
         hideItem(sendEmailVerificationDiv);
+        
     } else {
-        emailVerified.innerHTML = 'E-mail não verificado';
-        showItem(sendEmailVerificationDiv);
+
+        if (user.emailVerified) {
+            emailVerified.innerHTML = 'Email verificado';
+            hideItem(sendEmailVerificationDiv);
+        } else {
+            emailVerified.innerHTML = 'E-mail não verificado';
+            showItem(sendEmailVerificationDiv);
+        }
     }
+
 
     userImg.src = user.photoURL ? user.photoURL : '../img/unknownUser.png';
     userName.innerHTML = user.displayName;
