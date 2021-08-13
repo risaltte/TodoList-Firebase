@@ -125,5 +125,30 @@ function signInWithFacebook() {
         });
 }
 
+// FUNÇÃO PARA ATUALIZAR NOME DE USUÁRIO
+function updateUserName() {
+    var newUserName = prompt('Informe um novo nome de usuário:', userName.innerHTML);
+    if (newUserName && newUserName !== '') {
+        // Atualiza na interface web (DOM)
+        userName.innerHTML = newUserName;
+
+        // atualiza no Firebase
+        showItem(loading);
+        firebase.auth().currentUser.updateProfile(
+            {
+                displayName: newUserName
+            }
+        ).catch(function (error) {
+            alert('Houve um erro ao atualizar o nome de usuário.');
+            console.log(error);
+        }).finally(function () {            
+            hideItem(loading);
+        }); 
+
+    } else {
+        alert('O nome do usuário não pode ser vazio.');
+    }
+}
+
 
 
