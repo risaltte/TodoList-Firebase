@@ -106,11 +106,23 @@ function signInWithGitHub() {
     showItem(loading);
 
     firebase.auth().signInWithRedirect(new firebase.auth.GithubAuthProvider())
-    .catch(function (error) {
-        alert('Houve um erro ao autenticar usando o GitHub.');
-        console.log(error);
-        hideItem(loading);
-    });
+        .catch(function (error) {
+            alert('Houve um erro ao autenticar usando o GitHub.');
+            console.log(error);
+            hideItem(loading);
+        });
+}
+
+// AUTENTICAÇÃO PELO FACEBOOK
+function signInWithFacebook() {
+    showItem(loading);
+
+    firebase.auth().signInWithRedirect(new firebase.auth.FacebookAuthProvider())
+        .catch(function (error) {
+            alert('Houve um erro de autenticação usando o Facebook');
+            console.log(error);
+            hideItem(loading);
+        });
 }
 
 
