@@ -79,6 +79,31 @@ function showAuth() {
     showItem(auth);
 }
 
+// Centralizar e traduzir erros
+function showError(prefix, error) {
+    console.log(error);
+    hideItem(loading);
+
+    switch (error.code) {
+        case 'auth/invalid-email':
+        case 'auth/user-not-found':
+        case 'auth/wrong-password':
+            alert(prefix + ' ' + 'E-mail ou senha inválidos.');
+            break;    
+        case 'auth/weak-password':
+            alert(prefix + ' ' + 'A senha deve ter pelo mesno 6 caracteres.');
+            break;    
+        case 'auth/email-already-in-use':
+            alert(prefix + ' ' + 'Este e-mail já está em uso.');
+            break;    
+        case 'auth/popup-closed-by-user':
+            alert(prefix + ' ' + 'O popup de autenticação foi fechado antes da operação ser concluída.');
+            break;    
+        default:
+            alert(prefix + ' ' + error.message);
+    }
+}
+
 // Configurações Extra de e-mail
 var actionCodeSettings = {
     url: 'http://127.0.0.1:5500/'
