@@ -151,4 +151,25 @@ function updateUserName() {
 }
 
 
+// pERMITE REMOVER A CONTA DO USUÁRIO
+function deleteUserAccount() {
+    var confirmation = confirm('Realmente deseja excluir sua conta?');
+
+    if (confirmation) {
+        showItem(loading);
+        firebase.auth().currentUser.delete()
+            .then(function () {
+                alert('A conta foi removida com sucesso.');
+            })
+            .catch(function (error) {
+                alert('Houve um erro ao remover a sua conta.');
+                console.log(error);
+            })
+            .finally(function () {
+                hideItem(loading);
+            });
+    }
+}
+
+
 
