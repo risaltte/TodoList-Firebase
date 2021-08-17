@@ -106,5 +106,5 @@ function showError(prefix, error) {
 
 // Configurações Extra de e-mail
 var actionCodeSettings = {
-    url: 'http://127.0.0.1:5500/'
+    url: 'https://todolist-udemy-ec916.firebaseapp.com'
 }
