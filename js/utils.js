@@ -1,3 +1,4 @@
+// Definindo referências para elementos da interface
 var authForm = document.getElementById('authForm');
 var ahthFormTitle = document.getElementById('authFormTitle');
 var register = document.getElementById('register');
@@ -15,6 +16,8 @@ var userName = document.getElementById('userName');
 
 var sendEmailVerificationDiv = document.getElementById('sendEmailVerificationDiv');
 var emailVerified = document.getElementById('emailVerified');
+
+var todoForm = document.getElementById('todoForm');
 
 // Alterar do formulário de autenticação para o cadastro de novas contas
 function toggleToRegister() {
@@ -108,3 +111,7 @@ function showError(prefix, error) {
 var actionCodeSettings = {
     url: 'https://todolist-udemy-ec916.firebaseapp.com'
 }
+
+// Referencia para database
+var database = firebase.database();
+var dbRefUsers = database.ref('users');
