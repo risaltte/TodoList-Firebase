@@ -35,7 +35,29 @@ function fillTodoList(dataSnapshot) {
         var li = document.createElement('li');
         var spanLi = document.createElement('span');
         spanLi.appendChild(document.createTextNode(value.name));
+        spanLi.id = item.key;
         li.appendChild(spanLi);
+
+        var liRemoveBtn = document.createElement('button');
+        liRemoveBtn.appendChild(document.createTextNode('Excluir'));
+        liRemoveBtn.setAttribute('onclick', 'removeTodo(\"' + item.key + '\")');
+        liRemoveBtn.setAttribute('class', 'danger todoBtn');
+        li.appendChild(liRemoveBtn);
+
         ulTodoList.appendChild(li);
     });
+}
+
+// Remove tarefas
+function removeTodo(key) {
+    var selectedItem = document.getElementById(key);
+    var confirmation = confirm('Realmente deseja remover a terefa \"' + selectedItem.innerHTML + '\"?');
+
+    if (confirmation) {
+        dbRefUsers.child(firebase.auth().currentUser.uid)
+            .child(key).remove()
+            .catch(function (error) {
+                showError('Falha ao remover a tarefa: ', error);
+            });
+    }
 }
