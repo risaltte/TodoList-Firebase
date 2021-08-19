@@ -18,6 +18,8 @@ var sendEmailVerificationDiv = document.getElementById('sendEmailVerificationDiv
 var emailVerified = document.getElementById('emailVerified');
 
 var todoForm = document.getElementById('todoForm');
+var todoCount = document.getElementById('todoCount');
+var ulTodoList = document.getElementById('ulTodoList');
 
 // Alterar do formulário de autenticação para o cadastro de novas contas
 function toggleToRegister() {
@@ -72,6 +74,11 @@ function showUserContent (user) {
 
     userEmail.innerHTML = user.email;
     hideItem(auth);
+
+    dbRefUsers.child(firebase.auth().currentUser.uid).on('value', function (dataSnapshot) {
+        fillTodoList(dataSnapshot);
+    });
+
     showItem(userContent);
 }
 
