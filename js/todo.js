@@ -10,11 +10,13 @@ todoForm.onsubmit = function (event) {
 
         dbRefUsers.child(firebase.auth().currentUser.uid).push(data)
             .then(function () {
-                console.log('Tarefa ' + data.name + ' adicionada com sucesso.');
+                console.log('Tarefa \"' + data.name + '\" adicionada com sucesso.');
             })
             .catch(function (error) {
                 showError('Falha ao adicionar tarefa: ', error);
             });
+        
+        todoForm.name.value = '';
 
     } else {
         alert('O nome da tarefa não pode estar vazio.');
@@ -44,6 +46,12 @@ function fillTodoList(dataSnapshot) {
         liRemoveBtn.setAttribute('class', 'danger todoBtn');
         li.appendChild(liRemoveBtn);
 
+        var liUpdateBtn = document.createElement('button');
+        liUpdateBtn.appendChild(document.createTextNode('Editar'));
+        liUpdateBtn.setAttribute('onclick', 'updateTodo(\"' + item.key + '\")');
+        liUpdateBtn.setAttribute('class', 'alternative todoBtn');
+        li.appendChild(liUpdateBtn);
+
         ulTodoList.appendChild(li);
     });
 }
@@ -55,9 +63,38 @@ function removeTodo(key) {
 
     if (confirmation) {
         dbRefUsers.child(firebase.auth().currentUser.uid)
-            .child(key).remove()
-            .catch(function (error) {
-                showError('Falha ao remover a tarefa: ', error);
-            });
+            .child(key)
+            .remove()
+                .then(function () {
+                    console.log('Tarefa \"' + selectedItem.innerHTML + '\" removida com sucesso');
+                })
+                .catch(function (error) {
+                    showError('Falha ao remover a tarefa: ', error);
+                });
+    }
+}
+
+// Atualizar tarefas
+function updateTodo(key) {
+    var selectedItem = document.getElementById(key);
+    var newTodoName = prompt('Informe um novo nome para a tarefa \"' + selectedItem.innerHTML + '\":', selectedItem.innerHTML);
+
+    if (newTodoName !== '') {
+        var data = {
+            name: newTodoName
+        }
+
+        dbRefUsers.child(firebase.auth().currentUser.uid)
+            .child(key)
+            .update(data)
+                .then(function () {
+                    console.log('Tarefa "' + data.name + '\" atualizada com sucesso.');
+                })
+                .catch(function () {
+                    showError('Falha ao atualizar tarefa: ', error);
+                })
+
+    } else {
+        alert('O nome da tarefa não pode ser vazio.');
     }
 }
