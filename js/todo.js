@@ -5,7 +5,8 @@ todoForm.onsubmit = function (event) {
 
     if (todoForm.name.value != '') {
         var data = {
-            name: todoForm.name.value
+            name: todoForm.name.value,
+            nameLowerCase: todoForm.name.value.toLowerCase()
         };
 
         dbRefUsers.child(firebase.auth().currentUser.uid).push(data)
@@ -81,7 +82,8 @@ function updateTodo(key) {
 
     if (newTodoName !== '') {
         var data = {
-            name: newTodoName
+            name: newTodoName,
+            nameLowerCase: newTodoName.toLowerCase()
         }
 
         dbRefUsers.child(firebase.auth().currentUser.uid)

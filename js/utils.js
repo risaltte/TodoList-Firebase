@@ -82,11 +82,12 @@ function showUserContent (user) {
 
     search.onkeyup = function() {
         if (search.value != '') {
+            var searchText = search.value.toLowerCase()
             // Busca tarefas filtradas somente uma vez
             dbRefUsers.child(user.uid)
-            .orderByChild('name')   // Ordena as tarefas pelo nome
-            .startAt(search.value)
-            .endAt(search.value + '\uf8ff')
+            .orderByChild('nameLowerCase')   // Ordena as tarefas pelo nome
+            .startAt(searchText)
+            .endAt(searchText + '\uf8ff')
             .once('value')
             .then(function (dataSnapshot) {
                 fillTodoList(dataSnapshot);
