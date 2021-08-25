@@ -10,12 +10,17 @@ todoForm.onsubmit = function (event) {
             if (file.type.includes('image')) { // verifica se o arquivo é uma imagem
                var imgName = firebase.database().ref().push().key + '-' + file.name;
                
-               var imgPath = 'todoListFiles /' + firebase.auth().currentUser.uid + '/' + imgName;
+               var imgPath = 'todoListFiles/' + firebase.auth().currentUser.uid + '/' + imgName;
                
+               // Criar uma referência do arquivo usando o caminho criado anteriormente
                var storageRef = firebase.storage().ref(imgPath);
 
                // Upload do arquivo
-               storageRef.put(file);
+               var upload = storageRef.put(file);
+
+               trackUpload(upload);
+            } else {
+                alert('O arquivo selecionado precisa ser uma imagem.');
             }
         }
 
@@ -38,6 +43,29 @@ todoForm.onsubmit = function (event) {
         alert('O nome da tarefa não pode estar vazio.');
     }
 };
+
+// Rastreia  o progresso de upload
+function trackUpload(upload) {
+
+    showItem(progress);
+
+    upload.on(
+        'state_changed',
+
+        function (snapshot) { // Segundo argumento: Recebe informações sobre o upload
+            progress.value = snapshot.bytesTransferred / snapshot.totalBytes * 100;
+        },
+
+        function (error) { // Terceiro argumento: Função executada em caso de erro no upload
+            showError('Falha no upload da imagem: ', error);
+        },
+
+        function() { // Quarto argumento: Função excutada em caso de sucesso no upload
+            console.log('Sucesso no upload.');
+            hideItem(progress);
+        }
+    )    
+}
 
 // Exibir a lista de tarefas do usuário
 function fillTodoList(dataSnapshot) {

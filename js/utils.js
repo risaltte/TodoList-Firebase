@@ -23,6 +23,9 @@ var ulTodoList = document.getElementById('ulTodoList');
 
 var search = document.getElementById('search');
 
+var progressFeedback = document.getElementById('progressFeedback');
+var progress = document.getElementById('progress');
+
 
 // Alterar do formulário de autenticação para o cadastro de novas contas
 function toggleToRegister() {
