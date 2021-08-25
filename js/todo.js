@@ -4,6 +4,21 @@ todoForm.onsubmit = function (event) {
     event.preventDefault();
 
     if (todoForm.name.value != '') {
+
+        var file = todoForm.file.files[0]; // seleciona o primeiro arquivo da seleção de arquivos
+        if (file != null) { // Verifica se o arquivo foi selecionado
+            if (file.type.includes('image')) { // verifica se o arquivo é uma imagem
+               var imgName = firebase.database().ref().push().key + '-' + file.name;
+               
+               var imgPath = 'todoListFiles /' + firebase.auth().currentUser.uid + '/' + imgName;
+               
+               var storageRef = firebase.storage().ref(imgPath);
+
+               // Upload do arquivo
+               storageRef.put(file);
+            }
+        }
+
         var data = {
             name: todoForm.name.value,
             nameLowerCase: todoForm.name.value.toLowerCase()
