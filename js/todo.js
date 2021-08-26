@@ -47,24 +47,52 @@ todoForm.onsubmit = function (event) {
 // Rastreia  o progresso de upload
 function trackUpload(upload) {
 
-    showItem(progress);
+    showItem(progressFeedback);
 
     upload.on(
         'state_changed',
 
         function (snapshot) { // Segundo argumento: Recebe informações sobre o upload
+            console.log((snapshot.bytesTransferred / snapshot.totalBytes * 100).toFixed(2) + '%');
             progress.value = snapshot.bytesTransferred / snapshot.totalBytes * 100;
         },
 
         function (error) { // Terceiro argumento: Função executada em caso de erro no upload
             showError('Falha no upload da imagem: ', error);
+            hideItem(progressFeedback);
         },
 
         function() { // Quarto argumento: Função excutada em caso de sucesso no upload
             console.log('Sucesso no upload.');
-            hideItem(progress);
+            hideItem(progressFeedback);
         }
-    )    
+    ) 
+    
+    var playPauseUpload = true // Estado de controle do Upload (pausado ou em andamento)
+
+    playPauseBtn.onclick = function () {
+        playPauseUpload = !playPauseUpload; // Inverte o estado de controle do upload
+
+        if (playPauseUpload) {
+            upload.resume() // Retoma o upload
+
+            playPauseBtn.innerHTML = 'Pausar';
+            console.log('Upload retomado');
+        } else {
+            upload.pause(); // Pausa o upload
+
+            playPauseBtn.innerHTML = 'Continuar';
+            console.log('Upload pausado');
+        }
+    }
+
+    cancelBtn.onclick = function () { // Botão para cancelar o upload
+        upload.cancel() // Cancela o Upload
+
+        alert('Upload cancelado pelo usuário!');
+        hideItem(progressFeedback);
+        playPauseBtn.innerHTML = 'Pausar';
+    }
 }
 
 // Exibir a lista de tarefas do usuário
