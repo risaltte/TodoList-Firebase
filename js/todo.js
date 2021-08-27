@@ -8,36 +8,64 @@ todoForm.onsubmit = function (event) {
         var file = todoForm.file.files[0]; // seleciona o primeiro arquivo da seleção de arquivos
         if (file != null) { // Verifica se o arquivo foi selecionado
             if (file.type.includes('image')) { // verifica se o arquivo é uma imagem
-               var imgName = firebase.database().ref().push().key + '-' + file.name;
-               
-               var imgPath = 'todoListFiles/' + firebase.auth().currentUser.uid + '/' + imgName;
-               
-               // Criar uma referência do arquivo usando o caminho criado anteriormente
-               var storageRef = firebase.storage().ref(imgPath);
+                var imgName = firebase.database().ref().push().key + '-' + file.name;
 
-               // Upload do arquivo
-               var upload = storageRef.put(file);
+                var imgPath = 'todoListFiles/' + firebase.auth().currentUser.uid + '/' + imgName;
 
-               trackUpload(upload);
+                // Criar uma referência do arquivo usando o caminho criado anteriormente
+                var storageRef = firebase.storage().ref(imgPath);
+
+                // Upload do arquivo
+                var upload = storageRef.put(file);
+
+                trackUpload(upload)
+                    .then(function () {
+
+                        storageRef.getDownloadURL()
+                            .then(function (downloadURL) {
+                                var data = {
+                                    imgUrl: downloadURL,
+                                    name: todoForm.name.value,
+                                    nameLowerCase: todoForm.name.value.toLowerCase()
+                                };
+
+                                dbRefUsers.child(firebase.auth().currentUser.uid).push(data)
+                                    .then(function () {
+                                        console.log('Tarefa \"' + data.name + '\" adicionada com sucesso.');
+                                    })
+                                    .catch(function (error) {
+                                        showError('Falha ao adicionar tarefa: ', error);
+                                    });
+
+                                todoForm.name.value = '';
+                                todoForm.file.value = '';
+                            });
+                            
+                    })
+                    .catch(function (error) {
+                        showError('Falha ao adicionar tarefa: ', error);
+                    });
+
             } else {
                 alert('O arquivo selecionado precisa ser uma imagem.');
             }
-        }
 
-        var data = {
-            name: todoForm.name.value,
-            nameLowerCase: todoForm.name.value.toLowerCase()
-        };
-
-        dbRefUsers.child(firebase.auth().currentUser.uid).push(data)
-            .then(function () {
-                console.log('Tarefa \"' + data.name + '\" adicionada com sucesso.');
-            })
-            .catch(function (error) {
-                showError('Falha ao adicionar tarefa: ', error);
-            });
-        
-        todoForm.name.value = '';
+        } else {
+            var data = {
+                name: todoForm.name.value,
+                nameLowerCase: todoForm.name.value.toLowerCase()
+            };
+    
+            dbRefUsers.child(firebase.auth().currentUser.uid).push(data)
+                .then(function () {
+                    console.log('Tarefa \"' + data.name + '\" adicionada com sucesso.');
+                })
+                .catch(function (error) {
+                    showError('Falha ao adicionar tarefa: ', error);
+                });
+            
+            todoForm.name.value = '';
+        }       
 
     } else {
         alert('O nome da tarefa não pode estar vazio.');
@@ -47,52 +75,55 @@ todoForm.onsubmit = function (event) {
 // Rastreia  o progresso de upload
 function trackUpload(upload) {
 
-    showItem(progressFeedback);
+    return new Promise(function (resolve, reject) {
 
-    upload.on(
-        'state_changed',
+        showItem(progressFeedback);
 
-        function (snapshot) { // Segundo argumento: Recebe informações sobre o upload
-            console.log((snapshot.bytesTransferred / snapshot.totalBytes * 100).toFixed(2) + '%');
-            progress.value = snapshot.bytesTransferred / snapshot.totalBytes * 100;
-        },
+        upload.on(
+            'state_changed',
 
-        function (error) { // Terceiro argumento: Função executada em caso de erro no upload
-            showError('Falha no upload da imagem: ', error);
-            hideItem(progressFeedback);
-        },
+            function (snapshot) { // Segundo argumento: Recebe informações sobre o upload
+                console.log((snapshot.bytesTransferred / snapshot.totalBytes * 100).toFixed(2) + '%');
+                progress.value = snapshot.bytesTransferred / snapshot.totalBytes * 100;
+            },
 
-        function() { // Quarto argumento: Função excutada em caso de sucesso no upload
-            console.log('Sucesso no upload.');
-            hideItem(progressFeedback);
+            function (error) { // Terceiro argumento: Função executada em caso de erro no upload
+                hideItem(progressFeedback);
+                reject(error);
+            },
+
+            function () { // Quarto argumento: Função excutada em caso de sucesso no upload
+                console.log('Sucesso no upload.');
+                hideItem(progressFeedback);
+                resolve();
+            }
+        )
+
+        var playPauseUpload = true // Estado de controle do Upload (pausado ou em andamento)
+
+        playPauseBtn.onclick = function () {
+            playPauseUpload = !playPauseUpload; // Inverte o estado de controle do upload
+
+            if (playPauseUpload) {
+                upload.resume() // Retoma o upload
+
+                playPauseBtn.innerHTML = 'Pausar';
+                console.log('Upload retomado');
+            } else {
+                upload.pause(); // Pausa o upload
+
+                playPauseBtn.innerHTML = 'Continuar';
+                console.log('Upload pausado');
+            }
         }
-    ) 
-    
-    var playPauseUpload = true // Estado de controle do Upload (pausado ou em andamento)
 
-    playPauseBtn.onclick = function () {
-        playPauseUpload = !playPauseUpload; // Inverte o estado de controle do upload
+        cancelBtn.onclick = function () { // Botão para cancelar o upload
+            upload.cancel() // Cancela o Upload
 
-        if (playPauseUpload) {
-            upload.resume() // Retoma o upload
-
+            hideItem(progressFeedback);
             playPauseBtn.innerHTML = 'Pausar';
-            console.log('Upload retomado');
-        } else {
-            upload.pause(); // Pausa o upload
-
-            playPauseBtn.innerHTML = 'Continuar';
-            console.log('Upload pausado');
         }
-    }
-
-    cancelBtn.onclick = function () { // Botão para cancelar o upload
-        upload.cancel() // Cancela o Upload
-
-        alert('Upload cancelado pelo usuário!');
-        hideItem(progressFeedback);
-        playPauseBtn.innerHTML = 'Pausar';
-    }
+    });
 }
 
 // Exibir a lista de tarefas do usuário
