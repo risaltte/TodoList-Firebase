@@ -138,6 +138,12 @@ function fillTodoList(dataSnapshot) {
         var value = item.val();
 
         var li = document.createElement('li');
+
+        var imgLi = document.createElement('img');
+        imgLi.src = value.imgUrl ? value.imgUrl : 'img/defaultTodo.png';
+        imgLi.setAttribute('class',  'imgTodo');
+        li.appendChild(imgLi);
+
         var spanLi = document.createElement('span');
         spanLi.appendChild(document.createTextNode(value.name));
         spanLi.id = item.key;
@@ -174,6 +180,8 @@ function removeTodo(key) {
                 .catch(function (error) {
                     showError('Falha ao remover a tarefa: ', error);
                 });
+    } else { // Improvement
+        console.log('Exclusão da tarefa cancelada pelo usuário.');
     }
 }
 
