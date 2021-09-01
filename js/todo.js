@@ -137,7 +137,8 @@ function fillTodoList(dataSnapshot) {
     dataSnapshot.forEach(function (item) {
         var value = item.val();
 
-        var li = document.createElement('li');
+        var li = document.createElement('li');        
+        li.id = item.key;
 
         var imgLi = document.createElement('img');
         imgLi.src = value.imgUrl ? value.imgUrl : 'img/defaultTodo.png';
@@ -146,7 +147,6 @@ function fillTodoList(dataSnapshot) {
 
         var spanLi = document.createElement('span');
         spanLi.appendChild(document.createTextNode(value.name));
-        spanLi.id = item.key;
         li.appendChild(spanLi);
 
         var liRemoveBtn = document.createElement('button');
@@ -167,21 +167,47 @@ function fillTodoList(dataSnapshot) {
 
 // Remove tarefas
 function removeTodo(key) {
-    var selectedItem = document.getElementById(key);
-    var confirmation = confirm('Realmente deseja remover a terefa \"' + selectedItem.innerHTML + '\"?');
+    var todoName = document.querySelector('#' + key + ' > span');
+    var todoImg = document.querySelector('#' + key + ' > img');
+    var confirmation = confirm('Realmente deseja remover a terefa \"' + todoName.innerHTML + '\"?');
 
     if (confirmation) {
         dbRefUsers.child(firebase.auth().currentUser.uid)
             .child(key)
             .remove()
                 .then(function () {
-                    console.log('Tarefa \"' + selectedItem.innerHTML + '\" removida com sucesso');
+                    console.log('Tarefa \"' + todoName.innerHTML + '\" removida com sucesso');
+                    removeFile(todoImg.src);
                 })
                 .catch(function (error) {
                     showError('Falha ao remover a tarefa: ', error);
                 });
     } else { // Improvement
         console.log('Exclusão da tarefa cancelada pelo usuário.');
+    }
+}
+
+// Remove Arquivos
+function removeFile(imgUrl) {
+    console.log(imgUrl);
+
+    // se não form imagem default indexOf retorna -1
+    var result = imgUrl.indexOf('img/defaultTodo.png');
+
+    if (result == -1) {
+        firebase.storage()
+            .refFromURL(imgUrl)
+            .delete()
+                .then(function () {
+                    console.log('Arquivo removido com sucesso');
+                })
+                .catch(function (error) {
+                    console.log('Falha ao remover arquivo');
+                    console.log(error);
+                });
+    
+    } else {
+        console.log('Nenhum arquivo removido.');
     }
 }
 
